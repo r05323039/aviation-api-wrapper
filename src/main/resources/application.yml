@@ -1,0 +1,23 @@
+resilience4j:
+  circuitbreaker:
+    instances:
+      aviationService:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10000
+  retry:
+    instances:
+      aviationService:
+        maxAttempts: 3
+        waitDuration: 2s
+logging:
+  level:
+    # ????? package ??
+    com.opennet.assignment.aviation.client.AviationClient: DEBUG
+
+feign:
+  client:
+    config:
+      default:
+        loggerLevel: FULL
