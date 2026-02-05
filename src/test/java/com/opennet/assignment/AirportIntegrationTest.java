@@ -70,5 +70,27 @@ class AirportIntegrationTest {
         mockMvc.perform(get("/api/v1/airports/KLAX"))
                 .andExpect(status().isServiceUnavailable())
                 .andExpect(jsonPath("$.code").value(503));
+    }@Test
+    void testGetAirport_CacheHit() throws Exception {
+        stubFor(WireMock.get(urlPathMatching("/v1/airports"))
+                .withQueryParam("apt", matching("KLAX"))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("""
+                            {
+                              "KLAX": [
+                                { "facility_name": "KLAX" }
+                              ]
+                            }
+                            """)));
+
+        mockMvc.perform(get("/api/v1/airports/KLAX"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/v1/airports/KLAX"))
+                .andExpect(status().isOk());
+
+        verify(1, getRequestedFor(urlPathMatching("/v1/airports"))
+                .withQueryParam("apt", matching("KLAX")));
     }
 }
