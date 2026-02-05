@@ -15,6 +15,7 @@ resilience4j:
       aviationService:
         maxAttempts: 3
         waitDuration: 2s
+
 logging:
   level:
     com.opennet.assignment.aviation.client.AviationClient: DEBUG
@@ -28,3 +29,12 @@ feign:
 aviation:
   api:
     url: https://api.aviationapi.com/v1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
