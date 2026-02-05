@@ -1,24 +1,31 @@
+spring:
+  application:
+    name: aviation-service
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=10m
+
+aviation:
+  api:
+    url: https://api.aviationapi.com/v1
+
 resilience4j:
-  timelimiter:
-    instances:
-      aviationService:
-        timeoutDuration: 10ms
   circuitbreaker:
     instances:
       aviationService:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
         minimumNumberOfCalls: 5
-        failureRateThreshold: 50
-        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3
         automaticTransitionFromOpenToHalfOpenEnabled: true
-  retry:
+        waitDurationInOpenState: 5s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+  timelimiter:
     instances:
       aviationService:
-        maxAttempts: 3
-        waitDuration: 2s
-
-logging:
-  level:
-    com.opennet.assignment.aviation.client.AviationClient: DEBUG
+        timeoutDuration: 2s
 
 feign:
   client:
@@ -26,15 +33,17 @@ feign:
       default:
         loggerLevel: FULL
 
-aviation:
-  api:
-    url: https://api.aviationapi.com/v1
-
 management:
   endpoints:
     web:
       exposure:
         include: health,info,metrics,prometheus
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
   endpoint:
     health:
       show-details: always
