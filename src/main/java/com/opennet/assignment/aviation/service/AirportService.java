@@ -2,6 +2,8 @@ package com.opennet.assignment.aviation.service;
 
 import com.opennet.assignment.aviation.client.AviationClient;
 import com.opennet.assignment.aviation.dto.AirportResponse;
+import com.opennet.assignment.aviation.exception.BusinessException;
+import com.opennet.assignment.aviation.exception.ErrorCode;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
@@ -25,18 +27,20 @@ public class AirportService {
 
         Map<String, List<AirportResponse>> responseMap = aviationClient.getAirports(icao);
 
-        if (responseMap != null && responseMap.containsKey(icao)) {
-            return responseMap.get(icao);
+        if (responseMap == null || responseMap.isEmpty()) {
+            log.info("Upstream returned empty response for ICAO: {}", icao);
+            return List.of();
+        }
+        if (!responseMap.containsKey(icao)) {
+            log.warn("Upstream returned data but missing expected key: [{}]. Keys found: {}", icao, responseMap.keySet());
+            return List.of();
         }
 
-        return responseMap != null && !responseMap.isEmpty()
-                ? responseMap.values().stream().findFirst().orElse(List.of())
-                : List.of();
+        return responseMap.get(icao);
     }
 
-    // 當熔斷開啟或 API 噴錯時執行
     public List<AirportResponse> getAirportFallback(String icao, Throwable t) {
-        log.warn("Fallback triggered: {}", t.getMessage());
-        return List.of();
+        log.error("Fallback triggered for ICAO [{}]. Original cause: {}", icao, t.getMessage(), t);
+        throw new BusinessException(ErrorCode.UPSTREAM_SERVICE_UNAVAILABLE);
     }
 }
