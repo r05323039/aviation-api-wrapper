@@ -1,0 +1,17 @@
+spring:
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connectTimeout: 1000
+            readTimeout: 1000
+
+  cache:
+    caffeine:
+      spec: maximumSize=100,expireAfterWrite=1s
+
+
+aviation:
+  api:
+    url: http://localhost:${wiremock.server.port}/v1
