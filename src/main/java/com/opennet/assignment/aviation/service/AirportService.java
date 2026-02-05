@@ -35,9 +35,8 @@ public class AirportService {
     }
 
     // 當熔斷開啟或 API 噴錯時執行
-    public List<AirportResponse> getAirportFallback(String icao, Throwable e) {
-        log.error("Fallback triggered for ICAO: {}. Reason: {}", icao, e.getMessage());
-        // 回傳空列表或自定義錯誤物件
+    public List<AirportResponse> getAirportFallback(String icao, Throwable t) {
+        log.warn("Fallback triggered: {}", t.getMessage());
         return List.of();
     }
 }

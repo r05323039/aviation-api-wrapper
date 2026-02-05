@@ -8,9 +8,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 import java.util.Map;
 
-@FeignClient(name = "aviationClient", url = "https://api.aviationapi.com/v1")
+@FeignClient(name = "aviationClient", url = "${aviation.api.url}")
 public interface AviationClient {
-
-    @GetMapping(value = "/airports", headers = "Accept=application/json")
+    String APPLICATION_JSON = "Accept=application/json";
+    @GetMapping(value = "/airports", headers = APPLICATION_JSON)
     Map<String, List<AirportResponse>> getAirports(@RequestParam("apt") String icao);
+
 }

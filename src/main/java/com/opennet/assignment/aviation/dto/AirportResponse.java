@@ -1,19 +1,32 @@
 package com.opennet.assignment.aviation.dto;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AirportResponse {
-    private String icao;
-    private String iata;
-    private String name;
+
+    @JsonProperty("facility_name")
+    private String facilityName;
+
     private String city;
-    private String state;
-    private String country;
-    private String elevation;
-    private String lat;
-    private String lon;
-    private String tz;
+
+    private Map<String, Object> otherFields = new HashMap<>();
+
+    @JsonAnySetter
+    public void add(String key, Object value) {
+        otherFields.put(key, value);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getOtherFields() {
+        return otherFields;
+    }
 }

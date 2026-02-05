@@ -1,11 +1,15 @@
 resilience4j:
+  timelimiter:
+    instances:
+      aviationService:
+        timeoutDuration: 10ms
   circuitbreaker:
     instances:
       aviationService:
-        registerHealthIndicator: true
-        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
         failureRateThreshold: 50
-        waitDurationInOpenState: 10000
+        waitDurationInOpenState: 10s
+        automaticTransitionFromOpenToHalfOpenEnabled: true
   retry:
     instances:
       aviationService:
@@ -13,7 +17,6 @@ resilience4j:
         waitDuration: 2s
 logging:
   level:
-    # ????? package ??
     com.opennet.assignment.aviation.client.AviationClient: DEBUG
 
 feign:
@@ -21,3 +24,7 @@ feign:
     config:
       default:
         loggerLevel: FULL
+
+aviation:
+  api:
+    url: https://api.aviationapi.com/v1
