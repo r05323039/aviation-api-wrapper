@@ -17,6 +17,8 @@ Although I had a flexible timeframe for submission, I adhered to the spirit of t
 ### 🏗️ Infrastructure Decision
 I intentionally **omitted containerization artifacts** (Dockerfile/Compose) to strictly focus on **Java backend engineering**. While the application is Cloud-Native ready (Stateless, Actuator enabled), I prioritized **code quality and testing coverage** over infrastructure setup for this specific assignment scope.
 
+### 🤖 AI Usage Declaration
+This project utilized AI assistance (Gemini) for architectural guidance, boilerplate generation (e.g., Global Exception Handler structure), and refining the resilience configuration strategies.
 ---
 
 ## 🛠️ Tech Stack
